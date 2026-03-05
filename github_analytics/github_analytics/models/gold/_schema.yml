@@ -1,0 +1,137 @@
+version: 2
+
+models:
+  - name: dim_repository
+    columns:
+      - name: repo_id
+        tests:
+          - not_null
+          - unique
+      - name: repo_name
+        tests:
+          - not_null
+      - name: owner_login
+        tests:
+          - not_null
+      - name: language
+        tests:
+          - not_null
+      - name: stars_count
+        tests:
+          - not_null
+      - name: forks_count
+        tests:
+          - not_null
+      - name: watchers_count
+        tests:
+          - not_null
+      - name: created_at
+        tests:
+          - not_null
+
+  - name: dim_date
+    columns:
+      - name: date_id
+        tests:
+          - not_null
+          - unique
+      - name: full_date
+        tests:
+          - not_null
+          - unique
+      - name: month
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+      - name: day_of_week
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1, 2, 3, 4, 5, 6]
+
+  - name: dim_contributor
+    columns:
+      - name: contributor_id
+        tests:
+          - not_null
+          - unique
+      - name: login
+        tests:
+          - not_null
+      - name: repos_contributed_to
+        tests:
+          - not_null
+      - name: total_activities
+        tests:
+          - not_null
+
+  - name: fact_repo_activity
+    columns:
+      - name: repo_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_repository')
+                field: repo_id
+      - name: date_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+      - name: activity_date
+        tests:
+          - not_null
+      - name: commits_count
+        tests:
+          - not_null
+      - name: unique_committers
+        tests:
+          - not_null
+      - name: prs_opened
+        tests:
+          - not_null
+      - name: prs_merged
+        tests:
+          - not_null
+      - name: issues_opened
+        tests:
+          - not_null
+      - name: issues_closed
+        tests:
+          - not_null
+
+  - name: scoring_repositories
+    columns:
+      - name: repo_id
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              arguments:
+                to: ref('dim_repository')
+                field: repo_id
+      - name: ranking
+        tests:
+          - not_null
+          - unique
+      - name: score_global
+        tests:
+          - not_null
+      - name: score_popularity
+        tests:
+          - not_null
+      - name: score_activity
+        tests:
+          - not_null
+      - name: score_responsiveness
+        tests:
+          - not_null
+      - name: score_community
+        tests:
+          - not_null

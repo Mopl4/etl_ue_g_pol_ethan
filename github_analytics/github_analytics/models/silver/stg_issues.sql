@@ -1,7 +1,30 @@
-{{ config(materialized='view') }}
+{{
+  config(
+    materialized='incremental',
+    schema='silver',
+    unique_key=['repo_id', 'issue_number'],
+    incremental_strategy='delete+insert'
+  )
+}}
 
 with source as (
-  select * from {{ source('bronze', 'raw_issues') }}
+  select s.*
+  from {{ source('bronze', 'raw_issues') }} s
+  {% if is_incremental() %}
+  left join {{ this }} e
+    on e.repo_id = s.repo_full_name
+   and e.issue_number = try_cast(s.issue_number as integer)
+  {% endif %}
+  where s.issue_number is not null
+  {% if is_incremental() %}
+    and (
+      e.repo_id is null
+      or coalesce(
+        try_cast(s.updated_at as timestamp),
+        try_cast(s.created_at as timestamp)
+      ) > coalesce(e.updated_at, e.created_at)
+    )
+  {% endif %}
 ),
 
 cleaned as (
@@ -10,7 +33,7 @@ cleaned as (
     repo_full_name as repo_id,
     try_cast(issue_number as integer) as issue_number,
 
-    -- useful fields (optionnels mais présents dans ton CSV)
+    -- useful fields
     title,
     state,
     user_login,

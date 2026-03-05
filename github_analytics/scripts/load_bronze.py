@@ -84,6 +84,33 @@ def _read_csv_union(con, files):
 def load_full(con, table_name, files):
     """Full refresh: drop and recreate from all matching CSVs."""
     read_expr = _read_csv_union(con, files)
+    if table_name == "raw_repositories":
+        con.execute(f"""
+            CREATE OR REPLACE TABLE bronze.{table_name} AS
+            SELECT * EXCLUDE (rn)
+            FROM (
+                SELECT
+                    *,
+                    row_number() over (
+                        PARTITION BY full_name
+                        ORDER BY
+                            updated_at desc nulls last,
+                            snapshot_date desc nulls last
+                    ) as rn
+                FROM (
+                    SELECT
+                        * EXCLUDE (created_at, updated_at, pushed_at, snapshot_date),
+                        try_cast(created_at as timestamp) as created_at,
+                        try_cast(updated_at as timestamp) as updated_at,
+                        try_cast(pushed_at as timestamp) as pushed_at,
+                        try_cast(snapshot_date as date) as snapshot_date
+                    FROM {read_expr}
+                )
+            )
+            WHERE rn = 1
+        """)
+        return
+
     con.execute(f"""
         CREATE OR REPLACE TABLE bronze.{table_name} AS
         SELECT * FROM {read_expr}

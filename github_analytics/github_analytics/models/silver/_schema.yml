@@ -1,0 +1,82 @@
+version: 2
+
+models:
+  - name: stg_repositories
+    columns:
+      - name: repo_id
+        tests:
+          - not_null
+          - unique
+      - name: owner_login
+        tests:
+          - not_null
+      - name: created_at
+        tests:
+          - not_null
+      - name: language
+        tests:
+          - not_null
+      - name: license_name
+        tests:
+          - not_null
+
+  - name: stg_commits
+    columns:
+      - name: commit_sha
+        tests:
+          - not_null
+          - unique
+      - name: repo_id
+        tests:
+          - not_null
+      - name: author_login
+        tests:
+          - not_null
+      - name: author_date
+        tests:
+          - not_null
+      - name: day_of_week
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1, 2, 3, 4, 5, 6]
+      - name: hour_of_day
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+
+  - name: stg_pull_requests
+    columns:
+      - name: repo_id
+        tests:
+          - not_null
+      - name: pr_number
+        tests:
+          - not_null
+      - name: user_login
+        tests:
+          - not_null
+      - name: created_at
+        tests:
+          - not_null
+
+  - name: stg_issues
+    columns:
+      - name: repo_id
+        tests:
+          - not_null
+      - name: issue_number
+        tests:
+          - not_null
+      - name: created_at
+        tests:
+          - not_null
+      - name: state
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["open", "closed"]

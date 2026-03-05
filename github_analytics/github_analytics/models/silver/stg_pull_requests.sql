@@ -1,7 +1,30 @@
-{{ config(materialized='view') }}
+{{
+  config(
+    materialized='incremental',
+    schema='silver',
+    unique_key=['repo_id', 'pr_number'],
+    incremental_strategy='delete+insert'
+  )
+}}
 
 with source as (
-  select * from {{ source('bronze', 'raw_pull_requests') }}
+  select s.*
+  from {{ source('bronze', 'raw_pull_requests') }} s
+  {% if is_incremental() %}
+  left join {{ this }} e
+    on e.repo_id = s.repo_full_name
+   and e.pr_number = try_cast(s.pr_number as integer)
+  {% endif %}
+  where s.pr_number is not null
+  {% if is_incremental() %}
+    and (
+      e.repo_id is null
+      or coalesce(
+        try_cast(s.updated_at as timestamp),
+        try_cast(s.created_at as timestamp)
+      ) > coalesce(e.updated_at, e.created_at)
+    )
+  {% endif %}
 ),
 
 cleaned as (

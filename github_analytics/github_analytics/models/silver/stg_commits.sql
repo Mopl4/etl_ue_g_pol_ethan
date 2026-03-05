@@ -1,7 +1,17 @@
-{{ config(materialized='view') }}
+{{
+  config(
+    materialized='incremental',
+    schema='silver',
+    incremental_strategy='append'
+  )
+}}
 
 with source as (
-  select * from {{ source('bronze', 'raw_commits') }}
+  select *
+  from {{ source('bronze', 'raw_commits') }}
+  {% if is_incremental() %}
+  where sha not in (select commit_sha from {{ this }})
+  {% endif %}
 ),
 
 cleaned as (
