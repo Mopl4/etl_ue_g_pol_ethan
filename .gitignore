@@ -1,0 +1,53 @@
+# OS
+.DS_Store
+
+# Editors
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Virtualenvs (génériques)
+.venv/
+venv/
+env/
+
+# Virtualenv présent dans ce repo (créé dans `github_analytics/`)
+github_analytics/bin
+github_analytics/include
+github_analytics/lib
+github_analytics/lib64
+github_analytics/pyvenv.cfg
+
+# dbt
+**/target/
+**/dbt_packages/
+**/logs/
+*.log
+
+# DuckDB / local DB files
+*.duckdb
+*.duckdb.wal
+*.duckdb.tmp
+*.db
+*.sqlite
+
+# Secrets
+.env
+.env.*
+
+# Lock files (LibreOffice, etc.)
+.~lock.*#
+
+# Course artifacts (éviter de pousser du contenu “cours”)
+github_analytics/TP_ELT_with_DBT.pdf
+github_analytics/Course_ELT_with_DBT.key
+
+# Notes / agent (local)
+AGENTS.md
+SUIVI_TP.md
