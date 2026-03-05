@@ -1,18 +1,10 @@
 #!/usr/bin/env python3
 """
-load_bronze.py (incremental, multi-file)
-=========================================
-Loads raw CSV files into DuckDB as Bronze tables.
-Each table ingests ALL files matching its glob pattern (e.g. raw_issues_*.csv).
+Charge les CSV `data/raw/` dans DuckDB (schéma `bronze`).
 
-- First run: creates tables from all matching CSV files.
-- Subsequent runs: inserts only NEW rows based on a dedup key.
-- Use --full-refresh to force a complete reload.
-
-Usage:
-  cd github_analytics   # dbt project folder
-  python ../scripts/load_bronze.py                # incremental
-  python ../scripts/load_bronze.py --full-refresh  # full reload
+Usage (depuis `github_analytics/github_analytics/`) :
+- `python ../scripts/load_bronze.py`
+- `python ../scripts/load_bronze.py --full-refresh`
 """
 
 import duckdb
@@ -26,7 +18,6 @@ DATA_DIR = os.path.join(
     "..", "data", "raw"
 )
 
-# Each table: glob pattern, dedup key, strategy
 tables = {
     "raw_repositories": {
         "pattern": "raw_repositories_*.csv",

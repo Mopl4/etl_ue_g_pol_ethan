@@ -13,25 +13,20 @@ with date_spine as (
 
 enriched as (
   select
-    -- surrogate key YYYYMMDD
     cast(strftime(full_date, '%Y%m%d') as integer) as date_id,
 
     full_date,
 
-    -- temporal fields
     extract('year' from full_date) as year,
     extract('month' from full_date) as month,
     extract('week' from full_date) as week_of_year,
-    extract('dow' from full_date) as day_of_week,      -- 0=Sunday ... 6=Saturday (DuckDB)
+    extract('dow' from full_date) as day_of_week,
 
-    -- readable names
-    strftime(full_date, '%A') as day_name,             -- Monday, Tuesday...
-    strftime(full_date, '%B') as month_name,           -- January, February...
+    strftime(full_date, '%A') as day_name,
+    strftime(full_date, '%B') as month_name,
 
-    -- weekend flag
     (extract('dow' from full_date) in (0, 6)) as is_weekend,
 
-    -- quarter
     extract('quarter' from full_date) as quarter
 
   from date_spine

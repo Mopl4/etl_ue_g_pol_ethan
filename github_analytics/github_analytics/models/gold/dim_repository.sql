@@ -13,7 +13,6 @@ select
   language,
   license_name,
 
-  -- rename GitHub field to the expected Gold field name
   stargazers_count as stars_count,
   forks_count,
   watchers_count,

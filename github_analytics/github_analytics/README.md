@@ -1,15 +1,11 @@
-Welcome to your new dbt project!
+# GitHub Analytics — projet dbt
 
-### Using the starter project
+Le compte-rendu complet du TP est dans `README.md` à la racine du dépôt.
 
-Try running the following commands:
-- dbt run
-- dbt test
-
-
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+Exécution rapide depuis ce dossier :
+```bash
+python ../scripts/load_bronze.py
+dbt run
+dbt test
+dbt docs generate
+```

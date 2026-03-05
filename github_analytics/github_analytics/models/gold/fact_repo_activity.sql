@@ -1,9 +1,6 @@
 {{ config(materialized='table') }}
 
 with
--- -----------------------
--- Sources (Silver)
--- -----------------------
 commits as (
   select
     repo_id,
@@ -42,9 +39,6 @@ issues as (
     and created_at is not null
 ),
 
--- -----------------------
--- Daily aggregations
--- -----------------------
 daily_commits as (
   select
     repo_id,
@@ -79,9 +73,6 @@ daily_issues as (
   group by repo_id, activity_date
 ),
 
--- -----------------------
--- Date grain union (all repo_id x date that appear anywhere)
--- -----------------------
 all_dates as (
   select repo_id, activity_date from daily_commits
   union
@@ -90,9 +81,6 @@ all_dates as (
   select repo_id, activity_date from daily_issues
 ),
 
--- -----------------------
--- Final fact table
--- -----------------------
 final as (
   select
     d.repo_id,
