@@ -3,7 +3,7 @@
     materialized='incremental',
     schema='silver',
     unique_key=['repo_id', 'pr_number'],
-    incremental_strategy='delete+insert'
+    incremental_strategy='merge'
   )
 }}
 

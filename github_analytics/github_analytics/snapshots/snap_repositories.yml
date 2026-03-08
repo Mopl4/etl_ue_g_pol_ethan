@@ -5,4 +5,4 @@ snapshots:
       schema: snapshots
       unique_key: "full_name"
       strategy: "timestamp"
-      updated_at: "updated_at"
+      updated_at: "snapshot_date"
